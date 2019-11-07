@@ -20,6 +20,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -28,6 +29,10 @@ import java.io.IOException;
 import java.util.Random;
 
 public class Main3Activity extends AppCompatActivity  {
+    Button nextque;
+    TextView tv;
+
+
 
     private GestureOverlayView gestureOverlayView = null;
 
@@ -45,6 +50,14 @@ public class Main3Activity extends AppCompatActivity  {
         GesturePerformListener gesturePerformListener = new GesturePerformListener(gestureLibrary);
 
         gestureOverlayView.addOnGesturePerformedListener(gesturePerformListener);
+        nextque = findViewById(R.id.nextque);
+        tv = findViewById(R.id.tv);
+        nextque.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                tv.setText("Draw The Square displayed  On the Particle!!");
+            }
+        });
 
 
     }
@@ -72,5 +85,9 @@ public class Main3Activity extends AppCompatActivity  {
             gestureOverlayView = (GestureOverlayView)findViewById(R.id.gesture_overlay_view);
         }
     }
+
+
+
+
 
 }

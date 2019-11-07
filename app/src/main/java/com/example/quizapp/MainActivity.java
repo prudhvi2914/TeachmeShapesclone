@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -62,27 +63,57 @@ private int questionnum = 0;
 
         result = findViewById(R.id.result);
 
-        scoreview = findViewById(R.id.congo);
         tv = findViewById(R.id.question);
 
         imageView = findViewById(R.id.imageView);
-        b = findViewById(R.id.button);
+        b = findViewById(R.id.getscore);
         b.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(),Main3Activity.class);
-                startActivity(intent);
-            }
-        });
+         @Override
+        public void onClick(View v) {
+        onClickScore("" + score);
+         }
+         });
 
 
     }
 
-    private String mChoices [][] = {
-            {"a", "b"},
-            {"a", "b"},
+//    public void onClickScore() {
+//
+//        Async.executeAsync(ParticleCloudSDK.getCloud(), new Async.ApiWork<ParticleCloud, Object>() {
+//            @Override
+//            public Object callApi(@NonNull ParticleCloud particleCloud) throws ParticleCloudException, IOException {
+//                // put your logic here to talk to the particle
+//                // --------------------------------------------
+//                List<String> functionParameters = new ArrayList<String>();
+//                functionParameters.add("green");
+//
+//                result.setText("Score:"+ score);
+//
+//                try {
+//                    mDevice.callFunction("score", functionParameters);
+//
+//                } catch (ParticleDevice.FunctionDoesNotExistException e1) {
+//                    e1.printStackTrace();
+//                }
+//
+//
+//                return -1;
+//            }
+//
+//            @Override
+//            public void onSuccess(Object o) {
+//                // put your success message here
+//                Log.d(TAG, "Success: Turned light green!!");
+//            }
+//
+//            @Override
+//            public void onFailure(ParticleCloudException exception) {
+//                // put your error handling code here
+//                Log.d(TAG, exception.getBestMessage());
+//            }
+//        });
+//    }
 
-    };
 
 
 
@@ -211,19 +242,18 @@ private int questionnum = 0;
                     tv.setText("How many Sides on the above image ? " +
                             "\n A. 3 \n B. 4\n\n" +
                             "Enter your response using the Particle.\n\n" +
-                            "(A = Button 1, B = Button 0)");
+                            "If A Press Button-4\nIf B Press Button-2");
 
 
     }
 
     public void moveToNext(){
-        Intent intent = new Intent(getApplicationContext(),SecondActivity.class);
+        Intent intent = new Intent(getApplicationContext(),Main3Activity.class);
         startActivity(intent);
 
 
 
     }
-
 
 
     public void subscribeToParticleEvents() {
@@ -240,6 +270,8 @@ private int questionnum = 0;
                                 String choice = event.dataPayload;
                                 if (choice.contentEquals("A")) {
                                     turnParticleGreen();
+                                    score = score + 1;
+                                    result.setText("Score:"+score);
                                 }
                                 else if (choice.contentEquals("B")) {
                                     turnParticleRed();
@@ -279,4 +311,49 @@ private int questionnum = 0;
     }
 
 
+
+    public void onClickScore(String score) {
+        Toast.makeText(getApplicationContext(), "On pressed", Toast.LENGTH_SHORT)
+                .show();
+
+        Async.executeAsync(ParticleCloudSDK.getCloud(), new Async.ApiWork<ParticleCloud, Object>() {
+            @Override
+            public Object callApi(@NonNull ParticleCloud particleCloud) throws ParticleCloudException, IOException {
+                // put your logic here to talk to the particle
+                // --------------------------------------------
+
+                // what functions are "public" on the particle?
+                Log.d(TAG, "Availble functions: " + mDevice.getFunctions());
+
+
+                List<String> functionParameters = new ArrayList<String>();
+                functionParameters.add(score);
+                result.setText("SCORE:"+ score );
+                Log.d(TAG, "callApi: I M IN LOOP");
+                try {
+                    mDevice.callFunction("score", functionParameters);
+                    Log.d(TAG,"TRYING TO CALL FUNC");
+
+                } catch (ParticleDevice.FunctionDoesNotExistException e1) {
+                    e1.printStackTrace();
+                }
+
+
+                return -1;
+            }
+
+            @Override
+            public void onSuccess(Object o) {
+                // put your success message here
+                Log.d(TAG, "Success!");
+            }
+
+            @Override
+            public void onFailure(ParticleCloudException exception) {
+                // put your error handling code here
+                Log.d(TAG, exception.getBestMessage());
+            }
+        });
+
+    }
 }
